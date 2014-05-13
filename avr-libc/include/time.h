@@ -109,11 +109,12 @@ extern          "C" {
     /** \ingroup avr_time */
     /* @{ */
 
-    /**
-        time_t represents seconds elapsed from Midnight, Jan 1 2000 UTC (the Y2K 'epoch').
-        Its range allows this implementation to represent time up to Tue Feb 7 06:28:15 2136 UTC.
-    */
+	/**
+	    time_t represents seconds elapsed from Midnight, Jan 1 1970 UTC (the Unix 'epoch').
+        Its range allows this implementation to represent time up to 03:14:07 UTC 2038-01-19
+	*/
     typedef uint32_t time_t;
+
 
     /**
     The time function returns the systems current time stamp.
