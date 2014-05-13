@@ -32,15 +32,28 @@
 	Standard time() function. Copying from __system_time must be atomic, since it
 	may be incremented at interrupt time.
 */
-#include <time.h>
+#include "time2k.h"
 #include <inttypes.h>
 
-extern volatile time_t __system_time;
+extern volatile time2k_t __system_time;
 
 time_t
 time(time_t * timer)
 {
-	time_t          ret;
+	time2k_t t;
+	time2k( &t );
+	t+=UNIX_OFFSET;
+	if(timer)
+	{
+		*timer = t;
+	}
+	return t;
+}
+
+time2k_t
+time2k(time2k_t * timer)
+{
+	time2k_t          ret;
 
 	asm             volatile(
 			                   "in __tmp_reg__, __SREG__" "\n\t"

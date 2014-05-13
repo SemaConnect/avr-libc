@@ -31,11 +31,37 @@
 /* Re entrant version of gmtime(). */
 
 #include <time.h>
+#include <time2k.h>
 #include <stdlib.h>
 #include <inttypes.h>
 
-void
-gmtime_r(const time_t * timer, struct tm * timeptr)
+void gmtime_r(const time_t * timer, struct tm * timeptr)
+{
+	time2k_t t;
+	if(*timer >= UNIX_OFFSET)
+	{
+		t = *timer - UNIX_OFFSET;
+		gmtime2k_r(&t, timeptr);
+
+		// Shift day of the week by 6 
+		timeptr->tm_wday = (timeptr->tm_wday + 6) % 7;
+		
+	}
+	else
+	{
+		// 1970 is 2 years into the leap cycle
+		// so, offset two years to 2002, 
+		t = *timer + 63158400; /* (365 + 366)*24*60*60  seconds */
+		gmtime2k_r(&t, timeptr);
+		// offset 30+2 years in the result to get back to 1970 base time
+		timeptr->tm_year -= 32;
+
+		// Shift day of the week by 2 
+		timeptr->tm_wday = (timeptr->tm_wday + 1) % 7;
+	}
+}
+
+void gmtime2k_r(const time2k_t * timer, struct tm * timeptr)
 {
     int32_t         fract;
     ldiv_t          lresult;

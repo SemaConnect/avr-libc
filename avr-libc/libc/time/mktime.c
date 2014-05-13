@@ -33,18 +33,24 @@
 	a binary time stamp. The process is then reversed to 'normalize' timeptr.
 */
 
-#include <time.h>
+#include <time2k.h>
 
 extern long     __utc_offset;
 
-extern int      (*__dst_ptr) (const time_t *, int32_t *);
+extern int      (*__dst_ptr) (const time2k_t *, int32_t *);
 
 time_t
 mktime(struct tm * timeptr)
 {
-	time_t          ret;
+	return mktime2k(timeptr) + UNIX_OFFSET;
+}
 
-	ret = mk_gmtime(timeptr);
+time2k_t
+mktime2k(struct tm * timeptr)
+{
+	time2k_t          ret;
+
+	ret = mk_gmtime2k(timeptr);
 
 	if (timeptr->tm_isdst < 0) {
 		if (__dst_ptr)
@@ -55,7 +61,7 @@ mktime(struct tm * timeptr)
 
 	ret -= __utc_offset;
 
-	localtime_r(&ret, timeptr);
+	localtime2k_r(&ret, timeptr);
 
 	return ret;
 }

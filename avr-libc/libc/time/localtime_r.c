@@ -33,16 +33,23 @@
 	zone and Daylight savings offset, then break it down into calendar time.
 */
 
-#include <time.h>
+#include <time2k.h>
 
 extern long     __utc_offset;
 
-extern int      (*__dst_ptr) (const time_t *, int32_t *);
+extern int      (*__dst_ptr) (const time2k_t *, int32_t *);
 
 void
 localtime_r(const time_t * timer, struct tm * timeptr)
 {
-	time_t          lt;
+	time2k_t t = *timer-UNIX_OFFSET;
+	localtime2k_r( &t, timeptr);
+}
+
+void
+localtime2k_r(const time2k_t * timer, struct tm * timeptr)
+{
+	time2k_t          lt;
 	int16_t         dst;
 
 	dst = -1;
@@ -55,6 +62,6 @@ localtime_r(const time_t * timer, struct tm * timeptr)
 	if (dst > 0)
 		lt += dst;
 
-	gmtime_r(&lt, timeptr);
+	gmtime2k_r(&lt, timeptr);
 	timeptr->tm_isdst = dst;
 }

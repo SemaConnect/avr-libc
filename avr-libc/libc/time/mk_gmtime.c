@@ -34,13 +34,35 @@
 
 */
 
-#include <time.h>
+#include <time2k.h>
 
 time_t
 mk_gmtime(const struct tm * timeptr)
 {
+	if(timeptr->tm_year >= 100)
+	{
+		return mk_gmtime2k(timeptr) + UNIX_OFFSET;
+	}
+	else
+	{
+		struct tm tm2=*timeptr;
+		// 1970 is 2 years into the leap year cycle...same as 2002
+		// shift the year to 2002 to compute a 2k timestamp in
+		// the same phase of the cycle
+		tm2.tm_year += 32;
 
-    time_t          ret;
+		// the returned timestamp is relative to 2000...but we want it relative to
+		// 2002...so substract 2 years
+		return mk_gmtime2k(&tm2) - 63158400; /* (365 + 366)*24*60*60  seconds */
+	}
+}
+
+
+time2k_t
+mk_gmtime2k(const struct tm * timeptr)
+{
+
+    time2k_t          ret;
     uint32_t        tmp;
     int             n, m, d, leaps;
 
