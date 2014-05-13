@@ -36,6 +36,7 @@
 #include <inttypes.h>
 
 extern volatile time2k_t __system_time;
+extern time2k_t __epoch_offset;
 
 time_t
 time(time_t * timer)
@@ -65,6 +66,7 @@ time2k(time2k_t * timer)
 			                  "out __SREG__, __tmp_reg__" "\n\t"
 				 ::
 	);
+   	ret += __epoch_offset;
 	if (timer)
 		*timer = ret;
 	return ret;
