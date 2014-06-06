@@ -33,4 +33,4 @@
 */
 #include <time.h>
 
-volatile time_t __system_time;
+volatile time_t __system_time = 0;

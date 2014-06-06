@@ -37,19 +37,21 @@
 
 #include <time.h>
 extern volatile time_t __system_time;
+extern time_t __epoch_offset;
 
 void
 set_system_time(time_t timestamp)
 {
-
+	time_t now;
 	asm             volatile(
 			                   "in __tmp_reg__, __SREG__" "\n\t"
 				                 "cli" "\n\t"
 				 ::
 	);
-	__system_time = timestamp;
+	now = __system_time;
 	asm             volatile(
 			                  "out __SREG__, __tmp_reg__" "\n\t"
 				 ::
 	);
+	__epoch_offset = timestamp - (now + UNIX_OFFSET);
 }
